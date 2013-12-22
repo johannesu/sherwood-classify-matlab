@@ -1,0 +1,9 @@
+*.mexw64
+*.mexa64
+*.bin
+Sherwood/cpp/*
+Sherwood/csharp/*
+Sherwood/MSR-LA - Sherwood Code Library.rtf
+Sherwood/ReadMe.txt
+Sherwood/sherwood.pdf
+

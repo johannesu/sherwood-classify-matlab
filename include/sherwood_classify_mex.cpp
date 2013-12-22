@@ -1,0 +1,87 @@
+#include "sherwood_mex.h"
+
+using namespace MicrosoftResearch::Cambridge::Sherwood;
+
+// F: Feature Response
+// S: StatisticsAggregator
+template<typename F, typename S>
+void sherwood_classify(int nlhs, 		    /* number of expected outputs */
+        mxArray        *plhs[],	    /* mxArray output pointer array */
+        int            nrhs, 		/* number of inputs */
+        const mxArray  *prhs[],		/* mxArray input pointer array */
+        Options options)
+{
+	unsigned int curarg = 0;
+	const matrix<float> features = prhs[curarg++];
+
+  if (options.verbose)
+    std::cout << "Loading tree at: " << options.forestName << std::endl;
+ 
+	// Point class
+	DataPointCollection testData(features);  
+
+	// Create the tree.
+	std::auto_ptr<Forest<F, S> > forest;
+
+	// Load the tree from file 
+  std::ifstream istream(options.forestName.c_str(), std::ios_base::binary);
+  forest = forest->Deserialize(istream);
+
+  unsigned int num_classes = forest->GetTree(0).GetNode(0).TrainingDataStatistics.BinCount();
+
+  if (options.verbose) 
+  {
+    std::cout << "Number of classes: " << num_classes << "." << std::endl;
+    std::cout << "Number of test data: " << testData.Count() << "." << std::endl;
+  }
+
+  // Output ordered as (class, index)
+  matrix<unsigned int> o_bins(num_classes,testData.Count());
+  for (int i = 0; i < o_bins.numel(); i++)
+    o_bins(i) = 0;
+   
+  // Perform classification
+  // forest::apply is wasting memory, bypassing it.
+  //
+  // Note: leafNodeIndices should unsigned int, modify tree.h and the line below.
+  //
+  std::vector<int> leafNodeIndices;
+
+  // Forest.h (Apply)
+  for (unsigned int t = 0; t < forest->TreeCount(); t++)
+  {
+    Tree<F,S>& tree = forest->GetTree(t);
+
+    // Tree.h
+    tree.Apply(testData, leafNodeIndices);
+
+    // Aggregate manually
+    for (unsigned int i = 0; i < testData.Count(); i++)
+    { 
+      S aggregator = tree.GetNode(leafNodeIndices[i]).TrainingDataStatistics;
+
+      assert(aggregator.BinCount() == num_classes);
+
+      for (unsigned int c = 0; c < num_classes; c++)
+        o_bins(c,i) += aggregator.bins_[c];
+    }
+ 
+    leafNodeIndices.clear();
+  }
+
+  plhs[0] = o_bins;
+}
+
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray  *prhs[])
+{
+  MexParams params(1, prhs+1);
+  Options options(params);
+
+  if (!options.WeakLearner.compare("axis-aligned-hyperplane"))
+    sherwood_classify<AxisAlignedFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  else if (!options.WeakLearner.compare("random-hyperplane"))
+    sherwood_classify<RandomHyperplaneFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  else 
+    mexErrMsgTxt("Unknown weak learner. Supported are: axis-aligned-hyperplane and random-hyperplane");
+  
+}
