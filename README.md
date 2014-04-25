@@ -8,7 +8,6 @@ The training and classification is parallelized.
 ![ScreenShot](screenshot/decision_boundaries.png)
 
 Visualizing decision boundaries for a three class problem.
-Random-hyperplanes was used as the weak learner.
 
 Getting started
 ===
