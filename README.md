@@ -3,11 +3,10 @@ This is a MATLAB wrapper for doing classification using the decision forest fram
 (http://research.microsoft.com/en-us/projects/decisionforests/) ,
 hereinafter referred to as Sherwood.
 
-The training and classification is parallelized.
+Training and classification is parallelized.
 
-![ScreenShot](screenshot/decision_boundaries.png)
+![Probability of each class after classification](screenshot/decision_boundaries.png)
 
-Visualizing decision boundaries for a three class problem.
 
 Getting started
 ===
