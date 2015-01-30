@@ -49,11 +49,10 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
 	// Point class
 	DataPointCollection trainingData(features,labels);  
 
-	if (options.verbose)
-		std::cout << "Training data has: " 	<< trainingData.Dimensions() << 
-								 " features " 					<< trainingData.CountClasses() << 
-								 " classes and " 				<< trainingData.Count() << 
-								 " examples." << std::endl;
+	if (options.verbose) {
+		mexPrintf("Training data has: %d features %d classes and %d examples.\n",
+              trainingData.Dimensions(), trainingData.CountClasses(), trainingData.Count());
+  }
 
   Random random;
 
@@ -64,8 +63,9 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
 
   // Without OPENMP no multi threading.
   #if USE_OPENMP == 0
-    if (options.MaxThreads > 1)
-      std::cout << "Compiled without OpenMP flags, falling back to single thread code." << std::endl;
+    if (options.MaxThreads > 1) {
+      mexPrintf("Compiled without OpenMP flags, falling back to single thread code.\n");
+    }
 
     options.MaxThreads = 1;
   #endif

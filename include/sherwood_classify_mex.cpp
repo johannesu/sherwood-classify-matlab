@@ -14,8 +14,9 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
 	unsigned int curarg = 0;
 	const matrix<float> features = prhs[curarg++];
 
-  if (options.verbose)
-    std::cout << "Loading tree at: " << options.forestName << std::endl;
+  if (options.verbose) {
+    mexPrintf("Loading tree at: %s\n", options.forestName.c_str());
+  }
  
 	// Point class
 	DataPointCollection testData(features);  
@@ -31,8 +32,8 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
 
   if (options.verbose) 
   {
-    std::cout << "Number of classes: " << num_classes << "." << std::endl;
-    std::cout << "Number of test data: " << testData.Count() << "." << std::endl;
+    mexPrintf("Number of classes: %d\n", num_classes);
+    mexPrintf("Number of test data: %d\n", testData.Count());
   }
 
   // Output ordered as (class, index)
