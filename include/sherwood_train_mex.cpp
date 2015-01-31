@@ -76,6 +76,8 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
   if (options.MaxThreads == 1)
   {
     ProgressStream progressStream(std::cout, Silent);
+
+    mexPrintf("Using 1 thread.\n");
   
     forest = ForestTrainer<F, S>::TrainForest 
     (random, trainingParameters, classificationContext, trainingData, &progressStream );
@@ -96,19 +98,26 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
         #pragma omp parallel
           current_num_threads = omp_get_num_threads();
 
-        mexPrintf("Using OpenMP with %d thread(s) (maximum %d) \n ",current_num_threads,omp_get_max_threads());
+        mexPrintf("Using OpenMP with %d threads (maximum %d) \n ",current_num_threads,omp_get_max_threads());
       }
 
       forest = std::auto_ptr<Forest<F,S> >(new Forest<F,S>());
       
-      
+      omp_lock_t writelock;
+      omp_init_lock(&writelock);
+
       #pragma omp parallel for
       for (int t = 0; t < trainingParameters.NumberOfTrees; t++)
       {
         std::auto_ptr<Tree<F,S> > tree = TreeTrainer<F,S>::TrainTree(random, 
             classificationContext, trainingParameters, trainingData);
+
+        omp_set_lock(&writelock);
         forest->AddTree(tree);
+        omp_unset_lock(&writelock);
       }
+
+      omp_destroy_lock(&writelock);
 
     #endif
   }
