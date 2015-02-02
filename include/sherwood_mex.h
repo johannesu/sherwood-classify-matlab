@@ -11,6 +11,25 @@
 #include "Serialize.h"
 #include <iostream>
 
+
+namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
+{
+template<typename F>
+class LinearFeatureFactory: public IFeatureResponseFactory<F>
+{
+public:
+
+  LinearFeatureFactory(unsigned int _Dimensions) : Dimensions(_Dimensions)
+  {};
+
+  F CreateRandom(Random& random)
+  {
+    return F::CreateRandom(random, Dimensions);
+  }
+private:
+  unsigned int Dimensions;
+};
+
 struct Options
 {
   Options(MexParams params) 
@@ -53,3 +72,5 @@ std::ostream& operator<<(std::ostream &out, const Options& o)
     out << " MaxThreads (Default: 1): " << o.MaxThreads << std::endl;
     return out;
 }
+
+}}}

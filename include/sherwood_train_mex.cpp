@@ -6,22 +6,6 @@
 
 using namespace MicrosoftResearch::Cambridge::Sherwood;
 
-template<typename F>
-class LinearFeatureFactory: public IFeatureResponseFactory<F>
-{
-public:
-
-	LinearFeatureFactory(unsigned int _Dimensions) : Dimensions(_Dimensions)
-	{};
-
-  F CreateRandom(Random& random)
-  {
-  	return F::CreateRandom(random, Dimensions);
-  }
-private:
-	unsigned int Dimensions;
-};
-
 // F: Feature Response
 // S: StatisticsAggregator
 template<typename F, typename S>
