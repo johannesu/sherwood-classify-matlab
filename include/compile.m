@@ -23,17 +23,17 @@ if ~exist(mex_file_name, 'file')
 	compile_file = true;
 end
 
-% Uncomment to recompile each time the cpp file is modified.
-% if length(mex_file) == 1
-% 	mex_modified = mex_file.datenum;
-% else
-% 	mex_modified = 0;
-% end
-% 
-% cpp_modified   = cpp_file.datenum;
-% if mex_modified < cpp_modified
-% 	compile_file = true;
-% end
+%Uncomment to recompile each time the cpp file is modified.
+if length(mex_file) == 1
+	mex_modified = mex_file.datenum;
+else
+	mex_modified = 0;
+end
+
+cpp_modified   = cpp_file.datenum;
+if mex_modified < cpp_modified
+	compile_file = true;
+end
 
 include_folders = {};
 

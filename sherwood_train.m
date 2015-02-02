@@ -92,6 +92,14 @@ sources = {'DataPointCollection.cpp', ...
 						'StatisticsAggregators.cpp'};
 
 
+% Moving the incuded Random.h  (cant handle large numbers in Windows)
+random_source = [my_path filesep 'Sherwood' filesep 'cpp' filesep 'lib' filesep 'Random.h'];
+
+if (exist(random_source,'file') == 2)
+	random_target = [my_path filesep 'Sherwood' filesep 'cpp' filesep 'lib' filesep 'Random.h.bak'];
+	movefile(random_source, random_target)
+end
+
 % Only compile if files have changed
 compile(cpp_file, out_file, sources, extra_arguments);
 
