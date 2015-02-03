@@ -2,11 +2,11 @@ classdef SherwoodSettings
 	
 	% Default values
 	properties (SetAccess = public)
-		MaxDecisionLevels = 5;
-		NumberOfCandidateFeatures = 10;
-		NumberOfCandidateThresholdsPerFeature = 10;
-		NumberOfTrees = 100;
-		MaxThreads = 1;
+		MaxDecisionLevels = int32(5);
+		NumberOfCandidateFeatures = int32(10);
+		NumberOfCandidateThresholdsPerFeature = int32(10);
+		NumberOfTrees = int32(100);
+		MaxThreads = int32(1);
 		ForestName = 'forest.bin';
 		Verbose = false;
 		WeakLearner = 'axis-aligned-hyperplane';
