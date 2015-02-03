@@ -45,8 +45,8 @@ classdef SherwoodSettings
 		function self = set.MaxDecisionLevels(self, MaxDecisionLevels)
 			MaxDecisionLevels = int32(MaxDecisionLevels);
 
-			if (MaxDecisionLevels <= 1)
-				error('MaxDecisionLevels must be > 1')
+			if (MaxDecisionLevels < 1)
+				error('MaxDecisionLevels must be >= 1')
 			end
 
 			self.MaxDecisionLevels = MaxDecisionLevels;
@@ -55,8 +55,8 @@ classdef SherwoodSettings
 		function self = set.NumberOfCandidateFeatures(self, NumberOfCandidateFeatures)
 			NumberOfCandidateFeatures = int32(NumberOfCandidateFeatures);
 
-			if (NumberOfCandidateFeatures <= 1)
-				error('NumberOfCandidateFeatures must be > 1')
+			if (NumberOfCandidateFeatures < 1)
+				error('NumberOfCandidateFeatures must be >= 1')
 			end
 
 			self.NumberOfCandidateFeatures = NumberOfCandidateFeatures;
@@ -65,8 +65,8 @@ classdef SherwoodSettings
 		function self = set.NumberOfCandidateThresholdsPerFeature(self, NumberOfCandidateThresholdsPerFeature)
 			NumberOfCandidateThresholdsPerFeature = int32(NumberOfCandidateThresholdsPerFeature);
 
-			if (NumberOfCandidateThresholdsPerFeature <= 1)
-				error('NumberOfCandidateThresholdsPerFeature must be > 1')
+			if (NumberOfCandidateThresholdsPerFeature < 1)
+				error('NumberOfCandidateThresholdsPerFeature must be >= 1')
 			end
 
 			self.NumberOfCandidateThresholdsPerFeature = NumberOfCandidateThresholdsPerFeature;
@@ -75,8 +75,8 @@ classdef SherwoodSettings
 		function self = set.NumberOfTrees(self, NumberOfTrees)
 			NumberOfTrees = int32(NumberOfTrees);
 
-			if (NumberOfTrees <= 1)
-				error('NumberOfTrees must be > 1')
+			if (NumberOfTrees < 1)
+				error('NumberOfTrees must be >= 1')
 			end
 
 			self.NumberOfTrees = NumberOfTrees;
@@ -86,8 +86,8 @@ classdef SherwoodSettings
 		function self = set.MaxThreads(self, MaxThreads)
 			MaxThreads = int32(MaxThreads);
 
-			if (MaxThreads <= 1)
-				error('MaxThreads must be > 1')
+			if (MaxThreads < 1)
+				error('MaxThreads must be >= 1')
 			end
 
 			self.MaxThreads = MaxThreads;
