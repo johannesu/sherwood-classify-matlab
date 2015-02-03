@@ -11,10 +11,10 @@ train_features = single([]);
 labels = uint8([]);
 for c = 1:num_classes
 	mu = rand(2,1);
-	train_features = [train_features mvnrnd(mu,sigma,num_example_per_class)'];
+	train_features = [train_features mvnrnd(mu,sigma,num_example_per_class)']; %#ok<AGROW>
 						
 	labels = [labels;
-					 c*ones(num_example_per_class,1)];
+					 c*ones(num_example_per_class,1)]; %#ok<AGROW>
 end
 
 % Rescale features 
@@ -28,6 +28,8 @@ train_features = train_features*max_feature;
 test_features = single([x(:)';y(:)']);
 
 %% Settings for training and testing
+settings = SherwoodSettings();
+
 % Maximum depth of each tree
 % Default: 5.
 settings.MaxDecisionLevels = 5;
@@ -46,7 +48,7 @@ settings.NumberOfCandidateThresholdsPerFeature = 20;
 settings.NumberOfTrees = 100;
 
 % Default: false.
-settings.verbose = false;
+settings.Verbose = false;
 
 % Determine which weak learner to be used as a split function.
 % Options {random-hyperplane, axis-aligned-hyperplane}
@@ -59,7 +61,7 @@ settings.MaxThreads =  feature('NumThreads');
 
 % The serialized forest will be saved and loaded from this filename
 % Default: forest.bin
-settings.forestName = 'forest.bin';
+settings.ForestName = 'forest.bin';
 
 %% Training
 t_t = tic;

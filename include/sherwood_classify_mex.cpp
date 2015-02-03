@@ -14,8 +14,8 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
 	unsigned int curarg = 0;
 	const matrix<float> features = prhs[curarg++];
 
-  if (options.verbose) {
-    mexPrintf("Loading tree at: %s\n", options.forestName.c_str());
+  if (options.Verbose) {
+    mexPrintf("Loading tree at: %s\n", options.ForestName.c_str());
   }
  
 	// Point class
@@ -25,12 +25,12 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
 	std::auto_ptr<Forest<F, S> > forest;
 
 	// Load the tree from file 
-  std::ifstream istream(options.forestName.c_str(), std::ios_base::binary);
+  std::ifstream istream(options.ForestName.c_str(), std::ios_base::binary);
   forest = forest->Deserialize(istream);
 
   unsigned int num_classes = forest->GetTree(0).GetNode(0).TrainingDataStatistics.BinCount();
 
-  if (options.verbose) 
+  if (options.Verbose) 
   {
     mexPrintf("Number of classes: %d\n", num_classes);
     mexPrintf("Number of test data: %d\n", testData.Count());

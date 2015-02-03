@@ -14,6 +14,10 @@ function sherwood_train(features,labels, settings)
 % Some work around exist see e.g
 % http://www.mathworks.com/matlabcentral/fileexchange/44408-matlab-mex-support-for-visual-studio-2013-and-mbuild
 % --
+if (~isa(settings, 'SherwoodSettings'))
+	error('Third argument must be SherwoodSettings class');
+end
+
 use_openmp = true;
 
 my_path = fileparts(mfilename('fullpath'));
@@ -21,7 +25,7 @@ addpath([my_path filesep 'include']);
 
 % Check input
 if (any(diff(unique(labels))-1))
-	error(sprintf('Labels index should be 1,2,...,n \nAnd all label index should have atleast one example.'));
+	error('Labels index should be 1,2,...,n \nAnd all label index should have atleast one example.');
 end
 
 if (min(labels(:)) ~=1)
@@ -32,16 +36,6 @@ if (size(features,2) ~= numel(labels))
 	error('Number of columns in feature vector (number of exampels) must be same as length of labels')
 end
 
-% Convert
-int_entries = {'MaxDecisionLevels','NumberOfCandidateFeatures',  ...
-							 'NumberOfCandidateThresholdsPerFeature', 'NumberOfTrees', 'MaxThreads'};
-for i = 1:numel(int_entries)
-	if (isfield(settings,int_entries{i}))
-			val = int32(getfield(settings,  int_entries{i}));
-			settings = setfield(settings, int_entries{i},val);
-	end
-end
-
 if ~isa(features,'single')
 	fprintf('Sherwood features uses single precision (floats), converting features matrix \n');
 	features = single(features);
@@ -50,13 +44,6 @@ end
 if ~isa(labels,'uint8')
 	fprintf('Sherwood labels uses unsigned ints (uint8), converting labels matrix \n');
 	labels = uint8(labels);
-end
-true_entires = {'verbose'};
-for i = 1:numel(true_entires)
-	if (isfield(settings,true_entires{i}))
-			val = logical(getfield(settings,  true_entires{i}));
-			settings = setfield(settings, true_entires{i},val);
-	end
 end
 
 my_name = mfilename('fullpath');
@@ -83,7 +70,7 @@ if (use_openmp)
 	
 	extra_arguments{end+1} = '-DUSE_OPENMP=1';
 else
-	extra_arguments{end+1} = '-DUSE_OPENMP=0';
+	extra_arguments{end+1} = '-DUSE_OPENMP=0'; %#ok<UNRCH>
 end
 
 % Additional files to be compiled.
@@ -104,4 +91,4 @@ end
 compile(cpp_file, out_file, sources, extra_arguments);
 
 % Labels from 0 in c++ code.
-sherwood_train_mex(features,labels-1, settings);
+sherwood_train_mex(features,labels-1, settings.generate_struct);

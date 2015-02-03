@@ -33,7 +33,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
 	// Point class
 	DataPointCollection trainingData(features,labels);  
 
-	if (options.verbose) {
+	if (options.Verbose) {
 		mexPrintf("Training data has: %d features %d classes and %d examples.\n",
               trainingData.Dimensions(), trainingData.CountClasses(), trainingData.Count());
   }
@@ -75,7 +75,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
       omp_set_num_threads(options.MaxThreads);
 
       unsigned int current_num_threads = 0;
-      if (options.verbose)
+      if (options.Verbose)
       {
         int current_num_threads;
 
@@ -107,7 +107,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
   }
 
   // Saving the forest
-  std::ofstream o(options.forestName.c_str(), std::ios_base::binary);
+  std::ofstream o(options.ForestName.c_str(), std::ios_base::binary);
 	forest->Serialize(o);
 }
 

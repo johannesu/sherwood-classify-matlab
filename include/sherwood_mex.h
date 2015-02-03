@@ -39,8 +39,8 @@ struct Options
     NumberOfCandidateThresholdsPerFeature = params.get<int>("NumberOfCandidateThresholdsPerFeature", 1);
     NumberOfTrees = params.get<int>("NumberOfTrees", 30);
 
-    verbose = params.get<bool>("verbose", false);
-    forestName = params.get<string>("forestName", "forest.bin");  
+    Verbose = params.get<bool>("Verbose", false);
+    ForestName = params.get<string>("ForestName", "forest.bin");  
     WeakLearner = params.get<string>("WeakLearner", "axis-aligned-hyperplane"); 
     MaxThreads = params.get<int>("MaxThreads", 1);
   };
@@ -51,8 +51,8 @@ struct Options
   int NumberOfTrees;
   int MaxThreads;
 
-  bool verbose;
-  string forestName;
+  bool Verbose;
+  string ForestName;
   string WeakLearner;
 };
   

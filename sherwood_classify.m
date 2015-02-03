@@ -1,36 +1,15 @@
 % MATLAB wrapper for the c++ wrapper.
 function [P, bins] = sherwood_classify(features, settings)
 
+if (~isa(settings, 'SherwoodSettings'))
+	error('Second argument must be SherwoodSettings class');
+end
+
 my_path = fileparts(mfilename('fullpath'));
 addpath([my_path filesep 'include']);
 
 % Convert
-int_entries = {'MaxDecisionLevels','NumberOfCandidateFeatures',  ...
-							 'NumberOfCandidateThresholdsPerFeature', 'NumberOfTrees', 'MaxThreads'};
-for i = 1:numel(int_entries)
-	if (isfield(settings,int_entries{i}))
-			val = int32(getfield(settings,  int_entries{i}));
-			settings = setfield(settings, int_entries{i},val);
-	end
-end
-
 features = single(features);
-
-true_entires = {'verbose'};
-for i = 1:numel(true_entires)
-	if (isfield(settings,true_entires{i}))
-			val = logical(getfield(settings,  true_entires{i}));
-			settings = setfield(settings, true_entires{i},val);
-	end
-end
-
-if ~isfield(settings,'verbose')
-	settings.verbose = false;
-end
-
-if ~isfield(settings,'MaxThreads')
-	settings.MaxThreads = int32(1);
-end
 
 my_name = mfilename('fullpath');
 my_path = fileparts(my_name);
@@ -60,7 +39,7 @@ isOpen = poolSize > 0;
 if ((settings.MaxThreads) > 1)
 	if (isOpen)
 		if (poolSize ~= settings.MaxThreads)
-			warning(sprintf('Number of open matlabpool(s) %d while MaxThreads %d, running code with %d threads  \n', poolSize, settings.MaxThreads, poolSize));
+			warning('Number of open matlabpool(s) %d while MaxThreads %d, running code with %d threads  \n', poolSize, settings.MaxThreads, poolSize);
 		end
 	else
 		matlabpool(settings.MaxThreads);
@@ -73,7 +52,7 @@ if ((settings.MaxThreads) > 1)
 	% Matlab cannot assign to bins inside the parfor
 	parfor thread = 1:settings.MaxThreads
 		index = indices(thread,1):indices(thread,2);
-		sub_bins{thread} = sherwood_classify_mex(features(:,index), settings);
+		sub_bins{thread} = sherwood_classify_mex(features(:,index), settings.generate_struct);
 	end
 	
 	if nargout == 1
@@ -98,9 +77,9 @@ if ((settings.MaxThreads) > 1)
 % Single thread
 else
 	if nargout == 1
-		P = single(sherwood_classify_mex(features, settings));
+		P = single(sherwood_classify_mex(features, settings.generate_struct));
 	else
-		bins = sherwood_classify_mex(features, settings);
+		bins = sherwood_classify_mex(features, settings.generate_struct);
 		P = single(bins);
 	end
 	
