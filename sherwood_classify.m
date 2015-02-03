@@ -32,8 +32,30 @@ sources = {	'DataPointCollection.cpp', ...
 % Only compile if files have changed
 compile(cpp_file, out_file, sources, extra_arguments);
 
+% Matlab decided to break backwords compability, this is a workaround to
+% make the code both backward and forward compatibile.
+old_style = false;
+
+v = version('-release');
+year = str2double(v(1:4));
+
+if (year < 2014)
+    old_style = true;
+end
+
+if (strcmp(year,'2013b'))
+    old_style = false;
+end
+
+
 % Parallel
-poolSize = matlabpool('size');
+if (old_style)
+	 poolSize = matlabpool('size'); %#ok<DPOOL>
+else
+    p = gcp;
+    poolSize = p.NumWorkers;
+end
+
 isOpen = poolSize > 0;
 
 if ((settings.MaxThreads) > 1)
@@ -41,8 +63,12 @@ if ((settings.MaxThreads) > 1)
 		if (poolSize ~= settings.MaxThreads)
 			warning('Number of open matlabpool(s) %d while MaxThreads %d, running code with %d threads  \n', poolSize, settings.MaxThreads, poolSize);
 		end
-	else
-		matlabpool(settings.MaxThreads);
+    else
+        if (old_style)
+            matlabpool(settings.MaxThreads); %#ok<DPOOL>
+        else
+            parpool(settings.MaxThreads);
+        end
 	end
 	
 	sub_bins = cell(settings.MaxThreads,1);
@@ -51,8 +77,8 @@ if ((settings.MaxThreads) > 1)
 	 
 	% Matlab cannot assign to bins inside the parfor
 	parfor thread = 1:settings.MaxThreads
-		index = indices(thread,1):indices(thread,2);
-		sub_bins{thread} = sherwood_classify_mex(features(:,index), settings.generate_struct);
+		index = indices(thread,1):indices(thread,2); %#ok<PFBNS>
+		sub_bins{thread} = sherwood_classify_mex(features(:,index), settings.generate_struct); %#ok<PFBNS>
 	end
 	
 	if nargout == 1
