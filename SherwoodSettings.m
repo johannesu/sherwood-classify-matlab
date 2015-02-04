@@ -45,8 +45,8 @@ classdef SherwoodSettings
 		function self = set.MaxDecisionLevels(self, MaxDecisionLevels)
 			MaxDecisionLevels = int32(MaxDecisionLevels);
 
-			if (MaxDecisionLevels < 1)
-				error('MaxDecisionLevels must be >= 1')
+			if (MaxDecisionLevels < 2)
+				error('MaxDecisionLevels must be >= 2')
 			end
 
 			self.MaxDecisionLevels = MaxDecisionLevels;
