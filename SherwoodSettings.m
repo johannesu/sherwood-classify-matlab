@@ -28,8 +28,39 @@ classdef SherwoodSettings
 	methods
 		function self = SherwoodSettings()
 			self.MaxThreads = feature('NumThreads');
-		end
+        end
 
+         % Training on either settings file will give the same result (excluding the
+        % random seed).
+        function equvialent = training_equvialent_settings(self, other)
+            equvialent = true;
+            
+            if (self.MaxDecisionLevels ~= other.MaxDecisionLevels)
+                equvialent = false;
+                return
+            end
+            
+            if (self.NumberOfCandidateFeatures ~= other.NumberOfCandidateFeatures)
+                equvialent = false;
+                return
+            end
+
+            if (self.NumberOfCandidateThresholdsPerFeature ~= other.NumberOfCandidateThresholdsPerFeature)
+                equvialent = false;
+               return
+            end
+  
+            if (self.NumberOfCandidateThresholdsPerFeature ~= other.NumberOfCandidateThresholdsPerFeature)
+                equvialent = false;
+                return
+            end
+            
+            if (~strcmp(self.WeakLearner, other.WeakLearner))
+                equvialent = false;
+                return
+            end
+        end
+        
 		% Set functions
 		function self = set.WeakLearner(self, WeakLearner)
 			switch(WeakLearner)
