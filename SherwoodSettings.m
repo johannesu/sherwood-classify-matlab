@@ -50,7 +50,7 @@ classdef SherwoodSettings
                return
             end
   
-            if (self.NumberOfCandidateThresholdsPerFeature ~= other.NumberOfCandidateThresholdsPerFeature)
+            if (self.NumberOfTrees ~= other.NumberOfTrees)
                 equvialent = false;
                 return
             end
