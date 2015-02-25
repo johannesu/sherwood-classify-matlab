@@ -26,7 +26,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
   TrainingParameters trainingParameters;
   trainingParameters.MaxDecisionLevels = options.MaxDecisionLevels;
   trainingParameters.NumberOfCandidateFeatures = options.NumberOfCandidateFeatures;
-  trainingParameters.NumberOfCandidateThresholdsPerFeature = options.NumberOfCandidateFeatures;
+  trainingParameters.NumberOfCandidateThresholdsPerFeature = options.NumberOfCandidateThresholdsPerFeature;
   trainingParameters.NumberOfTrees = options.NumberOfTrees;
   trainingParameters.Verbose = false;
 
