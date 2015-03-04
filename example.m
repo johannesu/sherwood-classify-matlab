@@ -30,6 +30,11 @@ test_features = single([x(:)';y(:)']);
 %% Settings for training and testing
 settings = SherwoodSettings();
 
+% Each tree stores the results as histograms
+% histogram (default): add all histogram over all trees and then calculate probability.
+% probability: calculate probability in each tree and then average over the trees.
+settings.TreeAggregator = 'histogram';
+        
 % Maximum depth of each tree
 % Default: 5.
 settings.MaxDecisionLevels = 5;
@@ -57,7 +62,7 @@ settings.WeakLearner = 'random-hyperplane';
 
 % Thread(s) used when training and testing.
 % Default: 1
-settings.MaxThreads =  feature('NumThreads');
+settings.MaxThreads =  feature('numThreads');
 
 % The serialized forest will be saved and loaded from this filename
 % Default: forest.bin

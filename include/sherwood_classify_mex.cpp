@@ -37,10 +37,12 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
   }
 
   // Output ordered as (class, index)
-  matrix<unsigned int> o_bins(num_classes,testData.Count());
-  for (int i = 0; i < o_bins.numel(); i++)
-    o_bins(i) = 0;
-   
+  matrix<double> output(num_classes,testData.Count());
+
+  for (int i = 0; i < output.numel(); i++) {
+    output(i) = 0;
+  }
+  
   // Perform classification
   // forest::apply is wasting memory, bypassing it.
   //
@@ -56,21 +58,45 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
     // Tree.h
     tree.Apply(testData, leafNodeIndices);
 
-    // Aggregate manually
-    for (unsigned int i = 0; i < testData.Count(); i++)
-    { 
-      S aggregator = tree.GetNode(leafNodeIndices[i]).TrainingDataStatistics;
+    // Aggregate histograms
+    if (options.TreeAggregator == Histogram) {
 
-      assert(aggregator.BinCount() == num_classes);
+      for (unsigned int i = 0; i < testData.Count(); i++)
+      { 
+        S aggregator = tree.GetNode(leafNodeIndices[i]).TrainingDataStatistics;
 
-      for (unsigned int c = 0; c < num_classes; c++)
-        o_bins(c,i) += aggregator.bins_[c];
-    }
+        for (unsigned int c = 0; c < num_classes; c++) {
+          output(c,i) += aggregator.bins_[c];
+        }
+      }
  
+    // Aggregate probabilities
+    } else if (options.TreeAggregator ==  Probability) {
+
+      int sum = 0;
+      for (unsigned int i = 0; i < testData.Count(); i++)
+      { 
+        S aggregator = tree.GetNode(leafNodeIndices[i]).TrainingDataStatistics;
+
+        for (unsigned int c = 0; c < num_classes; c++) {
+          sum += aggregator.bins_[c];
+        }
+
+       for (unsigned int c = 0; c < num_classes; c++) {
+          output(c,i) += aggregator.bins_[c]/sum;
+        }
+      
+        sum = 0;
+      }
+
+    } else {
+      mexErrMsgTxt("Unkown aggregator.");
+    }
+
     leafNodeIndices.clear();
   }
 
-  plhs[0] = o_bins;
+  plhs[0] = output;
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray  *prhs[])

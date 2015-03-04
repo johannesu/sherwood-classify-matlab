@@ -30,6 +30,8 @@ private:
   unsigned int Dimensions;
 };
 
+enum TreeAggregatorType {Histogram, Probability};
+
 struct Options
 {
   Options(MexParams params) 
@@ -43,6 +45,15 @@ struct Options
     ForestName = params.get<string>("ForestName", "forest.bin");  
     WeakLearner = params.get<string>("WeakLearner", "axis-aligned-hyperplane"); 
     MaxThreads = params.get<int>("MaxThreads", 1);
+    string TreeAggregatorStr = params.get<string>("TreeAggregator", "histogram");
+
+    if (TreeAggregatorStr == "histogram") {
+      TreeAggregator = Histogram;
+    } else if (TreeAggregatorStr == "probability") {
+      TreeAggregator = Probability;
+    } else {
+      mexErrMsgTxt("Unkown TreeAggregator");
+    }
   };
 
   int MaxDecisionLevels;
@@ -54,6 +65,7 @@ struct Options
   bool Verbose;
   string ForestName;
   string WeakLearner;
+  TreeAggregatorType TreeAggregator;
 };
   
 
@@ -70,6 +82,12 @@ std::ostream& operator<<(std::ostream &out, const Options& o)
     out << " NumberOfCandidateThresholdsPerFeature (No. of candidate thresholds per feature response function default: 1): " 
     <<  o.NumberOfCandidateThresholdsPerFeature << std::endl;
     out << " MaxThreads (Default: 1): " << o.MaxThreads << std::endl;
+    if (o.TreeAggregator == Histogram) {
+      out << " TreeAggregator: Histogram" << std::endl; 
+    } else {
+      out << " TreeAggregator: Probability" << std::endl;
+    }
+
     return out;
 }
 

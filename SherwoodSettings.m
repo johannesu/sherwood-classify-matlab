@@ -10,6 +10,7 @@ classdef SherwoodSettings
 		ForestName = 'forest.bin';
 		Verbose = false;
 		WeakLearner = 'axis-aligned-hyperplane';
+		TreeAggregator = 'histogram';
 	end
 		
 	methods (Hidden)
@@ -22,6 +23,7 @@ classdef SherwoodSettings
 			settings.ForestName = self.ForestName;
 			settings.WeakLearner = self.WeakLearner;
 			settings.Verbose = self.Verbose;
+			settings.TreeAggregator = self.TreeAggregator;
 		end
 	end
 
@@ -58,7 +60,8 @@ classdef SherwoodSettings
             if (~strcmp(self.WeakLearner, other.WeakLearner))
                 equvialent = false;
                 return
-            end
+			end
+
         end
         
 		% Set functions
@@ -70,6 +73,17 @@ classdef SherwoodSettings
 					self.WeakLearner = 'random-hyperplane';
 				otherwise	
 					error('WeakLearner supported: axis-aligned-hyperplane, random-hyperplane');
+			end
+		end
+
+		function self = set.TreeAggregator(self, TreeAggregator)
+			switch(TreeAggregator)
+				case 'histogram'
+					self.TreeAggregator = 'histogram';
+				case 'probability'
+					self.TreeAggregator = 'probability';
+				otherwise	
+					error('TreeAggregator available: histogram, probability');
 			end
 		end
 
