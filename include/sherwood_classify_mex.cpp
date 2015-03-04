@@ -83,7 +83,7 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
         }
 
        for (unsigned int c = 0; c < num_classes; c++) {
-          output(c,i) += aggregator.bins_[c]/sum;
+          output(c,i) += double(aggregator.bins_[c])/sum;
         }
       
         sum = 0;
