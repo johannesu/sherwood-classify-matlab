@@ -27,37 +27,11 @@ train_features = train_features*max_feature;
 [x,y] = meshgrid(1:max_feature,1:max_feature);
 test_features = single([x(:)';y(:)']);
 
-%% Settings for training and testing
+% Settings for training and testing, 
+% read the settings file for details
 settings = SherwoodSettings();
 
-% Each tree stores the results as histograms
-% histogram (default): add all histogram over all trees and then calculate probability.
-% probability: calculate probability in each tree and then average over the trees.
-settings.TreeAggregator = 'histogram';
-        
-% Maximum depth of each tree
-% Default: 5.
-settings.MaxDecisionLevels = 5;
-
-% Number of candidate feature response functions per split node
-% Default: 10.
-settings.NumberOfCandidateFeatures = 30;
-
-% Optimal entropy split is determined by thresholding on 
-% NumberOfCandidateThresholdsPerFeature equidistant points
-% Default 10.
-settings.NumberOfCandidateThresholdsPerFeature = 20;
-
-% Number of trees in the forest
-% Default: 30.
-settings.NumberOfTrees = 100;
-
-% Default: false.
-settings.Verbose = false;
-
-% Determine which weak learner to be used as a split function.
-% Options {random-hyperplane, axis-aligned-hyperplane}
-% Default: axis-aligned-hyperplane
+settings.WeakLearner = 'axis-aligned-hyperplane';
 settings.WeakLearner = 'random-hyperplane'; 
 
 % Thread(s) used when training and testing.
@@ -71,7 +45,7 @@ settings.ForestName = 'forest.bin';
 % Automatic scaling; it is faster to normalize the features prior
 % to using sherwood and settings this setting to false.
 % Default: true
-settings.FeatureScaling = true;
+settings.FeatureScaling = false;
 
 %% Training
 t_t = tic;

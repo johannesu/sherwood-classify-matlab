@@ -2,15 +2,39 @@ classdef SherwoodSettings
 	
 	% Default values
 	properties (SetAccess = public)
+		% Maximum depth of each tree
 		MaxDecisionLevels = int32(5);
+
+		% Number of candidate feature response functions per split node
 		NumberOfCandidateFeatures = int32(10);
+
+		% Optimal entropy split is determined by thresholding on 
+		% NumberOfCandidateThresholdsPerFeature equidistant points
 		NumberOfCandidateThresholdsPerFeature = int32(10);
-		NumberOfTrees = int32(100);
+
+		% Number of trees in the forest
+		NumberOfTrees = int32(30);
+
+		% Thread(s) used when training and testing.
 		MaxThreads = int32(1);
+
+		% The serialized forest will be saved and loaded from this filename	
 		ForestName = 'forest.bin';
+
+		% Verbose output during progress of the algorithm
 		Verbose = false;
-		WeakLearner = 'axis-aligned-hyperplane';
+
+		% Determine which weak learner to be used as a split function.
+		% Options {random-hyperplane, axis-aligned-hyperplane}
+		WeakLearner = 'random-hyperplane';
+
+		% Each tree stores the results as histograms
+		% histogram (default): add all histogram over all trees and then calculate probability.
+		% probability: calculate probability in each tree and then average over the trees.
 		TreeAggregator = 'histogram';
+
+		% Automatic scaling; it is faster to normalize the features prior
+		% to using sherwood and settings this setting to false.
 		FeatureScaling = true;
 	end
 		
