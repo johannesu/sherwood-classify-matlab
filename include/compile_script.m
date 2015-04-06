@@ -1,5 +1,5 @@
 % Compile files only if needed
-function compile(cpp_file, out_file, sources, extra_arguments)
+function compile_script(cpp_file, out_file, sources, extra_arguments)
 % Process
 filename = mfilename('fullpath');
 my_path = fileparts(filename);
