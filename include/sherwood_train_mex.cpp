@@ -64,7 +64,11 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
   featureStats.reserve(trainingData.Dimensions());
    
   if (!options.FeatureScaling) {
-     mexPrintf("No feature scaling is performed: make sure your features are scaled. \n");
+    
+    if (options.Verbose) {
+      mexPrintf("No feature scaling is performed: make sure your features are scaled. \n");
+    }
+
   } else { 
     for (unsigned int d = 0; d < trainingData.Dimensions(); ++d) {
       featureStats.push_back(trainingData.GetStats(d));
