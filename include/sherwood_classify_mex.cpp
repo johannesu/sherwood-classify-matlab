@@ -72,21 +72,13 @@ void sherwood_classify(int nlhs, 		    /* number of expected outputs */
  
     // Aggregate probabilities
     } else if (options.TreeAggregator ==  Probability) {
-
-      int sum = 0;
       for (unsigned int i = 0; i < testData.Count(); i++)
       { 
         S aggregator = tree.GetNode(leafNodeIndices[i]).TrainingDataStatistics;
 
         for (unsigned int c = 0; c < num_classes; c++) {
-          sum += aggregator.bins_[c];
+          output(c,i) += aggregator.GetProbability(c);
         }
-
-       for (unsigned int c = 0; c < num_classes; c++) {
-          output(c,i) += double(aggregator.bins_[c])/sum;
-        }
-      
-        sum = 0;
       }
 
     } else {
