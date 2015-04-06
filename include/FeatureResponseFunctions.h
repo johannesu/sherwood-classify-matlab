@@ -16,7 +16,17 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
 
   // Generate a normal distributed number given a uniform random number generator
   // Box-muller transform.
-  float randn(Random& random);
+  float randn(Random& random) 
+  {
+    float u = (2*random.NextDouble()) - 1; 
+    float v = (2*random.NextDouble()) - 1; 
+    float r = u * u + v * v;
+
+    if (r == 0 || r > 1) return randn(random);
+
+    float c = sqrt(-2 * log(r) / r);
+    return u * c;
+  }
 
   /// <summary>
   /// A feature that orders data points using one of their coordinates,
@@ -46,8 +56,10 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     /// </summary>
     /// <param name="randomNumberGenerator">A random number generator.</param>
     /// <returns>A new AxisAlignedFeatureResponse instance.</returns>
-    static AxisAlignedFeatureResponse CreateRandom(Random& random);
-    static AxisAlignedFeatureResponse CreateRandom(Random& random, unsigned int dimensions);
+    static AxisAlignedFeatureResponse CreateRandom(Random& random, unsigned int dimensions)
+    {
+      return AxisAlignedFeatureResponse(random.Next(0, dimensions));
+    }
 
     unsigned int Axis() const
     {
@@ -55,8 +67,11 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     }
 
     // IFeatureResponse implementation
-    float GetResponse(const IDataPointCollection& data, unsigned int sampleIndex) const;
-
+    float GetResponse(const IDataPointCollection& data, unsigned int sampleIndex) const  {
+      const DataPointCollection& concreteData = (DataPointCollection&)(data);
+      return concreteData.GetDataPoint(sampleIndex)[axis_];
+    }
+    
     std::string ToString() const;
   };
 
@@ -94,10 +109,22 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     /// </summary>
     /// <param name="randomNumberGenerator">A random number generator.</param>
     /// <returns>A new RandomHyperplaneFeatureResponse instance.</returns>
-    static RandomHyperplaneFeatureResponse CreateRandom(Random& random);
-    static RandomHyperplaneFeatureResponse CreateRandom(Random& random, unsigned int dimensions);
+    static RandomHyperplaneFeatureResponse CreateRandom(Random& random, unsigned int dimensions)
+    {
+      return RandomHyperplaneFeatureResponse(random, dimensions);
+    }
+
     // IFeatureResponse implementation
-    float GetResponse(const IDataPointCollection& data, unsigned int index) const;
+    float GetResponse(const IDataPointCollection& data, unsigned int index) const
+    {
+      const DataPointCollection& concreteData = (const DataPointCollection&)(data);   
+      
+      float response = n[0] * concreteData.GetDataPoint(index)[0];
+      for (unsigned int c = 1; c < dimensions; c++)
+        response += n[c] * concreteData.GetDataPoint(index)[c];  
+
+      return response;
+    }
   };	
 
 } } }

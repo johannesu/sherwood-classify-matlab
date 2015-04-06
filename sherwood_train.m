@@ -74,9 +74,7 @@ else
 end
 
 % Additional files to be compiled.
-sources = {'DataPointCollection.cpp', ...
-						'FeatureResponseFunctions.cpp', ...
-						'StatisticsAggregators.cpp'};
+sources = {};
 
 
 % Moving the incuded Random.h  (cant handle large numbers in Windows)

@@ -24,10 +24,7 @@ extra_arguments{end+1} = ['-I' my_path filesep 'include'];
 extra_arguments{end+1} = ['-I' my_path filesep 'Sherwood' filesep 'cpp' filesep 'lib'];
 
 % Additional files to be compiled.
-sources = {	'DataPointCollection.cpp', ...
-						'FeatureResponseFunctions.cpp', ...
-						'StatisticsAggregators.cpp'};
-
+sources = {};
 
 % Only compile if files have changed
 compile(cpp_file, out_file, sources, extra_arguments);
