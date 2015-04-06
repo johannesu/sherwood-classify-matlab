@@ -68,7 +68,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
   }
 
   // Parallel
-  // ParallelForestTrainer.h leads segfault.
+  // ParallelForestTrainer.h segfaults using gcc.
   else 
   {
     #if USE_OPENMP == 1
