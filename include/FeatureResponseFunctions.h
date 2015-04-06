@@ -4,7 +4,6 @@
 #include <string>
 #include <math.h>
 
-
 // This file defines some IFeatureResponse implementations used by the example code in
 // Classification.h, DensityEstimation.h, etc. Note we represent IFeatureResponse
 // instances using simple structs so that all tree data can be stored
@@ -28,58 +27,77 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     return u * c;
   }
 
-  /// <summary>
-  /// A feature that orders data points using one of their coordinates,
-  /// i.e. by projecting them onto a coordinate axis.
-  /// </summary>
   class AxisAlignedFeatureResponse
   {
-    unsigned int axis_;
+    unsigned int axis;
 
   public:
-    AxisAlignedFeatureResponse()
-    {
-      axis_ = -1;
-    }
+    AxisAlignedFeatureResponse() 
+    : axis(-1)
+    {}
 
-    /// <summary>
-    /// Create an AxisAlignedFeatureResponse instance for the specified axis.
-    /// </summary>
-    /// <param name="axis">The zero-based index of the axis.</param>
     AxisAlignedFeatureResponse(unsigned int axis)
-    {
-      axis_ = axis;
-    }
+    : axis(axis)
+    {}
 
-    /// <summary>
-    /// Create an AxisAlignedFeatureResponse instance with a random choice of axis.
-    /// </summary>
-    /// <param name="randomNumberGenerator">A random number generator.</param>
-    /// <returns>A new AxisAlignedFeatureResponse instance.</returns>
     static AxisAlignedFeatureResponse CreateRandom( Random& random, 
-                                                    unsigned int dimensions)
+                                                    unsigned int dimensions,
+                                                    std::vector<Stats>& featureStats)
     {
       return AxisAlignedFeatureResponse(random.Next(0, dimensions));
     }
 
     unsigned int Axis() const
     {
-      return axis_;
+      return axis;
     }
 
     // IFeatureResponse implementation
     float GetResponse(const IDataPointCollection& data, unsigned int sampleIndex) const  {
       const DataPointCollection& concreteData = (DataPointCollection&)(data);
-      return concreteData.GetDataPoint(sampleIndex)[axis_];
+      return concreteData.GetDataPoint(sampleIndex)[axis];
     }
     
     std::string ToString() const;
   };
 
-  /// <summary>
-  /// A feature that orders data points using a linear combination of their
-  /// coordinates, i.e. by projecting them onto a given direction vector.
-  /// </summary>
+  class AxisAlignedFeatureResponseNormalized
+  {
+    unsigned int axis;
+    float mean;
+    float stdev;
+
+  public:
+    AxisAlignedFeatureResponseNormalized() 
+    : axis(-1)
+    {}
+
+    AxisAlignedFeatureResponseNormalized(unsigned int axis, float mean, float stdev)
+    : axis(axis), mean(mean), stdev(stdev)
+    {}
+
+    static AxisAlignedFeatureResponseNormalized CreateRandom( Random& random, 
+                                                    unsigned int dimensions,
+                                                    std::vector<Stats>& featureStats)
+    {
+      unsigned int axis = random.Next(0, dimensions);
+      return AxisAlignedFeatureResponseNormalized(axis, featureStats[axis].mean,  featureStats[axis].stdev);
+    }
+
+    unsigned int Axis() const
+    {
+      return axis;
+    }
+
+    // IFeatureResponse implementation
+    float GetResponse(const IDataPointCollection& data, unsigned int sampleIndex) const  {
+      const DataPointCollection& concreteData = (DataPointCollection&)(data);
+      return (concreteData.GetDataPoint(sampleIndex)[axis] - mean)/stdev;
+    }
+    
+    std::string ToString() const;
+  };
+
   class RandomHyperplaneFeatureResponse
   {
   public:
@@ -90,14 +108,9 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
       dimensions = 0;      
     }
 
-
-    /// <summary>
-    /// Create a RandomHyperplaneFeatureResponse instance for the specified direction vector.
-    /// </summary>
-    /// <param name="dx">The first element of the direction vector.</param>
-    /// <param name="dx">The second element of the direction vector.</param> 
     RandomHyperplaneFeatureResponse(  Random& random, 
-                                      unsigned int dimensions) 
+                                      unsigned int dimensions,
+                                      std::vector<Stats> featureStats) 
     : dimensions(dimensions)
     {
       n.resize(dimensions);
@@ -108,15 +121,11 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
       }
     }
 
-    /// <summary>
-    /// Create a RandomHyperplaneFeatureResponse instance with a random direction vector.
-    /// </summary>
-    /// <param name="randomNumberGenerator">A random number generator.</param>
-    /// <returns>A new RandomHyperplaneFeatureResponse instance.</returns>
     static RandomHyperplaneFeatureResponse CreateRandom(Random& random, 
-                                                        unsigned int dimensions)
+                                                        unsigned int dimensions,
+                                                        std::vector<Stats>& featureStats)
     {
-      return RandomHyperplaneFeatureResponse(random, dimensions);
+      return RandomHyperplaneFeatureResponse(random, dimensions, featureStats);
     }
 
     // IFeatureResponse implementation
@@ -127,6 +136,51 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
       float response = n[0] * concreteData.GetDataPoint(index)[0];
       for (unsigned int c = 1; c < dimensions; c++) {
         response += n[c] * concreteData.GetDataPoint(index)[c];  
+      }
+
+      return response;
+    }
+  };  
+
+  class RandomHyperplaneFeatureResponseNormalized
+  {
+  public:
+    unsigned dimensions;
+    std::vector<float> n;
+    std::vector<Stats> featureStats;
+
+    RandomHyperplaneFeatureResponseNormalized() {
+      dimensions = 0;      
+    }
+
+    RandomHyperplaneFeatureResponseNormalized(  Random& random, 
+                                      unsigned int dimensions,
+                                      std::vector<Stats> featureStats) 
+    : dimensions(dimensions), featureStats(featureStats)
+    {
+      n.resize(dimensions);
+
+      // Normal distributed numbers to gives an unbiased random unit vector.
+      for (unsigned int c = 0; c < dimensions; c++) {
+        n[c] = randn(random); 
+      }
+    }
+
+    static RandomHyperplaneFeatureResponseNormalized CreateRandom(Random& random, 
+                                                        unsigned int dimensions,
+                                                        std::vector<Stats>& featureStats)
+    {
+      return RandomHyperplaneFeatureResponseNormalized(random, dimensions, featureStats);
+    }
+
+    // IFeatureResponse implementation
+    float GetResponse(const IDataPointCollection& data, unsigned int index) const
+    {
+      const DataPointCollection& concreteData = (const DataPointCollection&)(data);   
+      
+      float response = n[0] * ((concreteData.GetDataPoint(index)[0] - featureStats[0].mean) / featureStats[0].stdev);
+      for (unsigned int c = 1; c < dimensions; c++) {
+        response += n[c] * ((concreteData.GetDataPoint(index)[c] - featureStats[c].mean) / featureStats[c].stdev);  
       }
 
       return response;

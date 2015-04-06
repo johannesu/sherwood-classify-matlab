@@ -4,7 +4,7 @@
 
 #include "sherwood_mex.h"
 #include <set>
-
+#include <math.h>
 
 using namespace MicrosoftResearch::Cambridge::Sherwood;
 
@@ -111,6 +111,28 @@ public:
   float GetTarget(int i) const
   {
     throw std::runtime_error("Data have no associated target values.");
+  }
+
+  Stats GetStats(int d) {
+
+    float mean = features(d,0);
+    for (unsigned int i = 1; i < numPoints; i++)
+    {
+      mean += features(d,i);
+    } 
+
+    mean /= numPoints;
+
+    float stddev = (features(d,0) - mean)*(features(d,0) - mean);
+    for (unsigned int i = 1; i < numPoints; i++)
+    {
+      stddev += (features(d,i) - mean)*(features(d,i) - mean);
+    } 
+
+    stddev /= numPoints;
+    stddev = sqrt(stddev);
+
+    return Stats(mean,stddev);
   }
 
   // features(feature_id, example_id)

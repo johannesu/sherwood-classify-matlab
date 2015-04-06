@@ -1,4 +1,20 @@
 #pragma once
+
+struct Stats {
+  float mean;
+  float stdev;
+
+  Stats() {
+    mean = 0;
+    stdev = 0;    
+  }
+
+  Stats(float mean, float stdev) 
+  : mean(mean), stdev(stdev)
+  {}
+
+};
+
 #include "mex.h"
 #include "mexutils.h"
 #include "cppmatrix.h" 
@@ -11,24 +27,8 @@
 #include "Serialize.h"
 #include <iostream>
 
-
 namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
 {
-template<typename F>
-class LinearFeatureFactory: public IFeatureResponseFactory<F>
-{
-public:
-
-  LinearFeatureFactory(unsigned int _Dimensions) : Dimensions(_Dimensions)
-  {};
-
-  F CreateRandom(Random& random)
-  {
-    return F::CreateRandom(random, Dimensions);
-  }
-private:
-  unsigned int Dimensions;
-};
 
 enum TreeAggregatorType {Histogram, Probability};
 
@@ -40,6 +40,7 @@ struct Options
     NumberOfCandidateFeatures = params.get<int>("NumberOfCandidateFeatures", 10);
     NumberOfCandidateThresholdsPerFeature = params.get<int>("NumberOfCandidateThresholdsPerFeature", 1);
     NumberOfTrees = params.get<int>("NumberOfTrees", 30);
+    FeatureScaling = params.get<bool>("FeatureScaling", true);
 
     Verbose = params.get<bool>("Verbose", false);
     ForestName = params.get<string>("ForestName", "forest.bin");  
@@ -62,6 +63,7 @@ struct Options
   int NumberOfTrees;
   int MaxThreads;
 
+  bool FeatureScaling;
   bool Verbose;
   string ForestName;
   string WeakLearner;

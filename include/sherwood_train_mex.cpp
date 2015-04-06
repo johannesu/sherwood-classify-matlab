@@ -6,6 +6,25 @@
 
 using namespace MicrosoftResearch::Cambridge::Sherwood;
 
+template<typename F>
+class FeatureFactory: public IFeatureResponseFactory<F>
+{
+public:
+
+  FeatureFactory(unsigned int dimensions, std::vector<Stats> featureStats) 
+  : dimensions(dimensions), featureStats(featureStats)
+  {};
+
+  F CreateRandom(Random& random)
+  {
+    return F::CreateRandom(random, dimensions, featureStats);
+  }
+private:
+  unsigned int dimensions;
+  std::vector<Stats> featureStats;
+};
+
+
 // F: Feature Response
 // S: StatisticsAggregator
 template<typename F, typename S>
@@ -40,7 +59,23 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
 
   Random random;
 
-  LinearFeatureFactory<F> featureFactory(trainingData.Dimensions());
+  // The range for each feature
+  std::vector<Stats> featureStats;
+  featureStats.reserve(trainingData.Dimensions());
+   
+  if (!options.FeatureScaling) {
+     mexPrintf("No feature scaling is performed: make sure your features are scaled. \n");
+  } else { 
+    for (unsigned int d = 0; d < trainingData.Dimensions(); ++d) {
+      featureStats.push_back(trainingData.GetStats(d));
+
+      if (options.Verbose) {
+        mexPrintf("Feature: %d mean: %f stdev: %f. \n", d, featureStats[d].mean, featureStats[d].stdev);
+      }
+    }
+  }
+
+  FeatureFactory<F> featureFactory(trainingData.Dimensions(), featureStats);
 
 	ClassificationTrainingContext<F> 
 		classificationContext(trainingData.CountClasses(), &featureFactory);
@@ -116,10 +151,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray  *prhs[])
 	MexParams params(1, prhs+2);
 	Options options(params);
 
-  if (!options.WeakLearner.compare("axis-aligned-hyperplane"))
+  if (!options.WeakLearner.compare("axis-aligned-hyperplane") && !options.FeatureScaling)
     sherwood_train<AxisAlignedFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
-  else if (!options.WeakLearner.compare("random-hyperplane"))
+  else if  (!options.WeakLearner.compare("axis-aligned-hyperplane") && options.FeatureScaling)
+    sherwood_train<AxisAlignedFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  else if (!options.WeakLearner.compare("random-hyperplane") && !options.FeatureScaling)
     sherwood_train<RandomHyperplaneFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  else if (!options.WeakLearner.compare("random-hyperplane") && options.FeatureScaling)
+    sherwood_train<RandomHyperplaneFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
   else
    mexErrMsgTxt("Unknown weak learner. Supported are: axis-aligned-hyperplane and random-hyperplane");
 }

@@ -18,12 +18,38 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
   }
 
   template<> 
+  void Serialize_(std::ostream& o, const RandomHyperplaneFeatureResponseNormalized& feature)
+  {
+    binary_write(o, feature.dimensions);  
+
+    for (unsigned int i = 0; i < feature.dimensions; i++) {
+      binary_write(o, feature.n[i]);
+      binary_write(o, feature.featureStats[i].mean) ;
+      binary_write(o, feature.featureStats[i].stdev) ;
+    }
+  }
+
+  template<> 
+    void Deserialize_(std::istream& o, RandomHyperplaneFeatureResponseNormalized& feature)
+    { 
+      binary_read(o, feature.dimensions);
+      feature.n.resize(feature.dimensions);
+      feature.featureStats.resize(feature.dimensions);
+
+      for (unsigned int i = 0; i < feature.dimensions; i++) {
+        binary_read(o, feature.n[i]);
+        binary_read(o, feature.featureStats[i].mean) ;
+        binary_read(o, feature.featureStats[i].stdev) ;
+      }
+    }
+
+  template<> 
   void Serialize_(std::ostream& o, const RandomHyperplaneFeatureResponse& feature)
   {
     binary_write(o, feature.dimensions);  
 
     for (unsigned int i = 0; i < feature.dimensions; i++) {
-      binary_write(o, feature.n[i]) ;
+      binary_write(o, feature.n[i]);
     }
   }
 

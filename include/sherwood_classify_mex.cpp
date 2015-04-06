@@ -96,10 +96,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray  *prhs[])
   MexParams params(1, prhs+1);
   Options options(params);
 
-  if (!options.WeakLearner.compare("axis-aligned-hyperplane"))
+  if (!options.WeakLearner.compare("axis-aligned-hyperplane") && !options.FeatureScaling)
     sherwood_classify<AxisAlignedFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
-  else if (!options.WeakLearner.compare("random-hyperplane"))
+  else if (!options.WeakLearner.compare("axis-aligned-hyperplane") && options.FeatureScaling)
+    sherwood_classify<AxisAlignedFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  else if (!options.WeakLearner.compare("random-hyperplane") && !options.FeatureScaling)
     sherwood_classify<RandomHyperplaneFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  else if (!options.WeakLearner.compare("random-hyperplane") && options.FeatureScaling)
+    sherwood_classify<RandomHyperplaneFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
   else 
     mexErrMsgTxt("Unknown weak learner. Supported are: axis-aligned-hyperplane and random-hyperplane");
   

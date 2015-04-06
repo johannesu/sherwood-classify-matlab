@@ -11,6 +11,7 @@ classdef SherwoodSettings
 		Verbose = false;
 		WeakLearner = 'axis-aligned-hyperplane';
 		TreeAggregator = 'histogram';
+		FeatureScaling = true;
 	end
 		
 	methods (Hidden)
@@ -23,6 +24,7 @@ classdef SherwoodSettings
 			settings.ForestName = self.ForestName;
 			settings.WeakLearner = self.WeakLearner;
 			settings.Verbose = self.Verbose;
+			settings.FeatureScaling = self.FeatureScaling;
 			settings.TreeAggregator = self.TreeAggregator;
 		end
 	end
@@ -141,5 +143,9 @@ classdef SherwoodSettings
 		function self = set.Verbose(self, Verbose)
 			self.Verbose = logical(Verbose);
 		end	
+
+		function self = set.FeatureScaling(self, FeatureScaling)
+			self.FeatureScaling = logical(FeatureScaling);
+		end
 	end
 end

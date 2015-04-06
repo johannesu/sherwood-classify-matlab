@@ -68,6 +68,11 @@ settings.MaxThreads =  feature('numThreads');
 % Default: forest.bin
 settings.ForestName = 'forest.bin';
 
+% Automatic scaling; it is faster to normalize the features prior
+% to using sherwood and settings this setting to false.
+% Default: true
+settings.FeatureScaling = true;
+
 %% Training
 t_t = tic;
 % Size of the features matrix is
