@@ -13,7 +13,7 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
   }
 
   template<typename T>
-  void binary_read(std::istream& i, T& value){
+  void binary_read(std::istream& i, T& value) {
       i.read(reinterpret_cast<char*>(&value), sizeof(T));
   }
 
@@ -22,8 +22,9 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
   {
     binary_write(o, feature.dimensions);  
 
-    for (unsigned int i = 0; i < feature.dimensions; i++)
+    for (unsigned int i = 0; i < feature.dimensions; i++) {
       binary_write(o, feature.n[i]) ;
+    }
   }
 
   template<> 
@@ -32,8 +33,9 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
       binary_read(o, feature.dimensions);
       feature.n.resize(feature.dimensions);
 
-      for (unsigned int i = 0; i < feature.dimensions; i++)
+      for (unsigned int i = 0; i < feature.dimensions; i++) {
         binary_read(o, feature.n[i]);
+      }
     }
 
 
@@ -43,8 +45,9 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     binary_write(o, S.binCount_);  
     binary_write(o, S.sampleCount_);  ;  
 
-    for (unsigned int i = 0; i < S.binCount_; i++)
+    for (unsigned int i = 0; i < S.binCount_; i++) {
       binary_write(o, S.bins_[i]) ;
+    }
   }
 
   template<> 
@@ -54,8 +57,9 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     binary_read(o, S.sampleCount_);
     S.bins_.resize(S.binCount_);
 
-    for (unsigned int i = 0; i < S.binCount_; i++)
+    for (unsigned int i = 0; i < S.binCount_; i++) {
       binary_read(o, S.bins_[i]);
+    }
   }
 }
 }

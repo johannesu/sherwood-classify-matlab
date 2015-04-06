@@ -1,14 +1,14 @@
 #pragma once
 
+#include "sherwood_mex.h"
+#include <string>
+#include <math.h>
+
+
 // This file defines some IFeatureResponse implementations used by the example code in
 // Classification.h, DensityEstimation.h, etc. Note we represent IFeatureResponse
 // instances using simple structs so that all tree data can be stored
 // contiguously in a linear array.
-
-#include <string>
-#include "Sherwood.h"
-#include "DataPointCollection.h"
-#include <math.h>
 
 namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
 {
@@ -56,7 +56,8 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     /// </summary>
     /// <param name="randomNumberGenerator">A random number generator.</param>
     /// <returns>A new AxisAlignedFeatureResponse instance.</returns>
-    static AxisAlignedFeatureResponse CreateRandom(Random& random, unsigned int dimensions)
+    static AxisAlignedFeatureResponse CreateRandom( Random& random, 
+                                                    unsigned int dimensions)
     {
       return AxisAlignedFeatureResponse(random.Next(0, dimensions));
     }
@@ -95,21 +96,25 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     /// </summary>
     /// <param name="dx">The first element of the direction vector.</param>
     /// <param name="dx">The second element of the direction vector.</param> 
-    RandomHyperplaneFeatureResponse(Random& random, unsigned int dimensions) 
+    RandomHyperplaneFeatureResponse(  Random& random, 
+                                      unsigned int dimensions) 
     : dimensions(dimensions)
     {
       n.resize(dimensions);
 
       // Normal distributed numbers to gives an unbiased random unit vector.
-      for (unsigned int c = 0; c < dimensions; c++)
+      for (unsigned int c = 0; c < dimensions; c++) {
         n[c] = randn(random); 
+      }
     }
+
     /// <summary>
     /// Create a RandomHyperplaneFeatureResponse instance with a random direction vector.
     /// </summary>
     /// <param name="randomNumberGenerator">A random number generator.</param>
     /// <returns>A new RandomHyperplaneFeatureResponse instance.</returns>
-    static RandomHyperplaneFeatureResponse CreateRandom(Random& random, unsigned int dimensions)
+    static RandomHyperplaneFeatureResponse CreateRandom(Random& random, 
+                                                        unsigned int dimensions)
     {
       return RandomHyperplaneFeatureResponse(random, dimensions);
     }
@@ -120,8 +125,9 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
       const DataPointCollection& concreteData = (const DataPointCollection&)(data);   
       
       float response = n[0] * concreteData.GetDataPoint(index)[0];
-      for (unsigned int c = 1; c < dimensions; c++)
+      for (unsigned int c = 1; c < dimensions; c++) {
         response += n[c] * concreteData.GetDataPoint(index)[c];  
+      }
 
       return response;
     }

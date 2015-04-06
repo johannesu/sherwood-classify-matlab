@@ -1,9 +1,7 @@
 #pragma once
 #include <math.h>
 #include <limits>
-#include <vector>
-#include "Sherwood.h"
-#include "DataPointCollection.h"
+#include "sherwood_mex.h"
 
 namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
 {

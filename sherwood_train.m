@@ -86,7 +86,7 @@ if (exist(random_source,'file') == 2)
 end
 
 % Only compile if files have changed
-compile(cpp_file, out_file, sources, extra_arguments);
+compile_script(cpp_file, out_file, sources, extra_arguments);
 
 % Labels from 0 in c++ code.
 sherwood_train_mex(features,labels-1, settings.generate_struct);

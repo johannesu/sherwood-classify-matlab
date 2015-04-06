@@ -2,19 +2,8 @@
 // for MATLAB matrices. No data is copied.
 #pragma once
 
-#include "mex.h"
-#include "mexutils.h"
-#include "cppmatrix.h" 
-
-#include <map>
-#include <memory>
-#include "Sherwood.h"
-#include "DataPointCollection.h"
-#include <string>
-#include <vector>
+#include "sherwood_mex.h"
 #include <set>
-#include <fstream>
-#include <sstream>
 
 
 using namespace MicrosoftResearch::Cambridge::Sherwood;
