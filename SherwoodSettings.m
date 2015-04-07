@@ -88,7 +88,7 @@ classdef SherwoodSettings
                 return
 			end
 
-            if (~strcmp(self.FeatureScaling, other.FeatureScaling))
+            if (self.FeatureScaling ~= other.FeatureScaling)
                 equvialent = false;
                 return
 			end
