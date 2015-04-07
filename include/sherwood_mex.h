@@ -48,6 +48,11 @@ struct Options
     MaxThreads = params.get<int>("MaxThreads", 1);
     string TreeAggregatorStr = params.get<string>("TreeAggregator", "histogram");
 
+    // FeatureScaling will make no difference for axis-aligned-hyperplane
+    if (WeakLearner.compare("axis-aligned-hyperplane")) {
+      FeatureScaling = false;
+    }
+
     if (TreeAggregatorStr == "histogram") {
       TreeAggregator = Histogram;
     } else if (TreeAggregatorStr == "probability") {

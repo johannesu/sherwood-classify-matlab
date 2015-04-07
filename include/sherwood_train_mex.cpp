@@ -66,7 +66,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
   if (!options.FeatureScaling) {
     
     if (options.Verbose) {
-      mexPrintf("No feature scaling is performed: make sure your features are scaled. \n");
+      mexPrintf("No feature scaling is performed: make sure your features are scaled if you are using random-hyperplane weak learner. \n");
     }
 
   } else { 
@@ -155,10 +155,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray  *prhs[])
 	MexParams params(1, prhs+2);
 	Options options(params);
 
-  if (!options.WeakLearner.compare("axis-aligned-hyperplane") && !options.FeatureScaling)
+  if (!options.WeakLearner.compare("axis-aligned-hyperplane"))
     sherwood_train<AxisAlignedFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
-  else if  (!options.WeakLearner.compare("axis-aligned-hyperplane") && options.FeatureScaling)
-    sherwood_train<AxisAlignedFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
   else if (!options.WeakLearner.compare("random-hyperplane") && !options.FeatureScaling)
     sherwood_train<RandomHyperplaneFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
   else if (!options.WeakLearner.compare("random-hyperplane") && options.FeatureScaling)

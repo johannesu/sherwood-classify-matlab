@@ -61,43 +61,6 @@ namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
     std::string ToString() const;
   };
 
-  class AxisAlignedFeatureResponseNormalized
-  {
-    unsigned int axis;
-    float mean;
-    float stdev;
-
-  public:
-    AxisAlignedFeatureResponseNormalized() 
-    : axis(-1)
-    {}
-
-    AxisAlignedFeatureResponseNormalized(unsigned int axis, float mean, float stdev)
-    : axis(axis), mean(mean), stdev(stdev)
-    {}
-
-    static AxisAlignedFeatureResponseNormalized CreateRandom( Random& random, 
-                                                    unsigned int dimensions,
-                                                    std::vector<Stats>& featureStats)
-    {
-      unsigned int axis = random.Next(0, dimensions);
-      return AxisAlignedFeatureResponseNormalized(axis, featureStats[axis].mean,  featureStats[axis].stdev);
-    }
-
-    unsigned int Axis() const
-    {
-      return axis;
-    }
-
-    // IFeatureResponse implementation
-    float GetResponse(const IDataPointCollection& data, unsigned int sampleIndex) const  {
-      const DataPointCollection& concreteData = (DataPointCollection&)(data);
-      return (concreteData.GetDataPoint(sampleIndex)[axis] - mean)/stdev;
-    }
-    
-    std::string ToString() const;
-  };
-
   class RandomHyperplaneFeatureResponse
   {
   public:
