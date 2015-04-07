@@ -30,6 +30,7 @@ struct Stats {
 namespace MicrosoftResearch { namespace Cambridge { namespace Sherwood
 {
 
+enum WeakLearnType {AxisAligned, RandomHyperplane};
 enum TreeAggregatorType {Histogram, Probability};
 
 struct Options
@@ -39,18 +40,23 @@ struct Options
     MaxDecisionLevels = params.get<int>("MaxDecisionLevels", 5) - 1;
     NumberOfCandidateFeatures = params.get<int>("NumberOfCandidateFeatures", 10);
     NumberOfCandidateThresholdsPerFeature = params.get<int>("NumberOfCandidateThresholdsPerFeature", 1);
-    NumberOfTrees = params.get<int>("NumberOfTrees", 30);
-    FeatureScaling = params.get<bool>("FeatureScaling", true);
-
-    Verbose = params.get<bool>("Verbose", false);
-    ForestName = params.get<string>("ForestName", "forest.bin");  
-    WeakLearner = params.get<string>("WeakLearner", "axis-aligned-hyperplane"); 
     MaxThreads = params.get<int>("MaxThreads", 1);
-    string TreeAggregatorStr = params.get<string>("TreeAggregator", "histogram");
+    NumberOfTrees = params.get<int>("NumberOfTrees", 30);
 
-    // FeatureScaling will make no difference for axis-aligned-hyperplane
-    if (WeakLearner.compare("axis-aligned-hyperplane")) {
-      FeatureScaling = false;
+    FeatureScaling = params.get<bool>("FeatureScaling", true);
+    Verbose = params.get<bool>("Verbose", false);
+
+    ForestName = params.get<string>("ForestName", "forest.bin");  
+
+    WeakLearnerStr = params.get<string>("WeakLearner", "axis-aligned-hyperplane"); 
+    TreeAggregatorStr = params.get<string>("TreeAggregator", "histogram");
+
+    if (WeakLearnerStr == "axis-aligned-hyperplane") {
+      WeakLearner = AxisAligned;
+    } else if (WeakLearnerStr == "random-hyperplane") {
+      WeakLearner = RandomHyperplane;
+    } else {
+      mexErrMsgTxt("Unkown WeakLearner");
     }
 
     if (TreeAggregatorStr == "histogram") {
@@ -59,6 +65,14 @@ struct Options
       TreeAggregator = Probability;
     } else {
       mexErrMsgTxt("Unkown TreeAggregator");
+    }
+
+    if (WeakLearner == AxisAligned) {
+      FeatureScaling = false;
+
+      if (Verbose) {
+        mexPrintf("Turning of feature scaling since it make no difference for axis-aligned-hyperplane weak learner.");
+      }
     }
   };
 
@@ -71,8 +85,13 @@ struct Options
   bool FeatureScaling;
   bool Verbose;
   string ForestName;
-  string WeakLearner;
+
   TreeAggregatorType TreeAggregator;
+  WeakLearnType WeakLearner;
+
+  // Used for Verbose output
+  string TreeAggregatorStr;
+  string WeakLearnerStr;
 };
   
 

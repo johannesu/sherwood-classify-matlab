@@ -28,7 +28,7 @@ private:
 // F: Feature Response
 // S: StatisticsAggregator
 template<typename F, typename S>
-void sherwood_train(int nlhs, 		    /* number of expected outputs */
+void main_function(int nlhs, 		    /* number of expected outputs */
         mxArray        *plhs[],	    /* mxArray output pointer array */
         int            nrhs, 		/* number of inputs */
         const mxArray  *prhs[],		/* mxArray input pointer array */
@@ -55,6 +55,8 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
 	if (options.Verbose) {
 		mexPrintf("Training data has: %d features %d classes and %d examples.\n",
               trainingData.Dimensions(), trainingData.CountClasses(), trainingData.Count());
+
+    mexPrintf("Using WeakLearner: %s. \n", options.WeakLearnerStr.c_str());
   }
 
   Random random;
@@ -65,8 +67,8 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
    
   if (!options.FeatureScaling) {
     
-    if (options.Verbose) {
-      mexPrintf("No feature scaling is performed: make sure your features are scaled if you are using random-hyperplane weak learner. \n");
+    if (options.Verbose && options.WeakLearner != AxisAligned) {
+      mexPrintf("No feature scaling is performed: make sure your features are scaled. \n");
     }
 
   } else { 
@@ -121,7 +123,7 @@ void sherwood_train(int nlhs, 		    /* number of expected outputs */
         #pragma omp parallel
           current_num_threads = omp_get_num_threads();
 
-        mexPrintf("Using OpenMP with %d threads (maximum %d) \n ",current_num_threads,omp_get_max_threads());
+        mexPrintf("Using OpenMP with %d threads (maximum %d) \n", current_num_threads, omp_get_max_threads());
       }
 
       forest = std::auto_ptr<Forest<F,S> >(new Forest<F,S>());
@@ -155,12 +157,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray  *prhs[])
 	MexParams params(1, prhs+2);
 	Options options(params);
 
-  if (!options.WeakLearner.compare("axis-aligned-hyperplane"))
-    sherwood_train<AxisAlignedFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
-  else if (!options.WeakLearner.compare("random-hyperplane") && !options.FeatureScaling)
-    sherwood_train<RandomHyperplaneFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
-  else if (!options.WeakLearner.compare("random-hyperplane") && options.FeatureScaling)
-    sherwood_train<RandomHyperplaneFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
-  else
-   mexErrMsgTxt("Unknown weak learner. Supported are: axis-aligned-hyperplane and random-hyperplane");
+  if (options.WeakLearner == AxisAligned) {
+    main_function<AxisAlignedFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  }
+  else if (options.WeakLearner == RandomHyperplane && !options.FeatureScaling) {
+    main_function<RandomHyperplaneFeatureResponse, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  }
+  else if (options.WeakLearner == RandomHyperplane && options.FeatureScaling) {
+    main_function<RandomHyperplaneFeatureResponseNormalized, HistogramAggregator>(nlhs, plhs, nrhs, prhs, options);
+  }
+
 }
