@@ -48,15 +48,14 @@ The main difference with Sherwood are
 
 References
 ===
-1. 
-Antonio Criminisi, Jamie Shotton, and Ender Konukoglu
-[Decision Forests: A Unified Framework for Classification, Regression, Density Estimation, Manifold Learning and Semi-Supervised Learning]
-(http://research.microsoft.com/apps/pubs/default.aspx?id=158806). Foundations and Trends® in Computer Graphics and Vision, 2012.
+1. [Decision Forests: A Unified Framework for Classification, Regression, Density Estimation, Manifold Learning and Semi-Supervised Learning](http://research.microsoft.com/apps/pubs/default.aspx?id=158806)<br />
+Foundations and Trends® in Computer Graphics and Vision, 2012.<br />
+__Antonio Criminisi, Jamie Shotton, and Ender Konukoglu.__
 
-2. Randomforest-matlab, a Matlab wrapper of a R wrapper of Leo Breiman fortran code
-[https://code.google.com/p/randomforest-matlab/](https://code.google.com/p/randomforest-matlab/).
+2. [Randomforest-matlab](https://code.google.com/p/randomforest-matlab/) <br />
+A Matlab wrapper of a R wrapper of Leo Breiman's fortran code.
 
-3. Matlab's tree bagger [http://www.mathworks.se/help/stats/treebagger.html]([http://www.mathworks.se/help/stats/treebagger.html).
-
+3. [Tree bagger](http://www.mathworks.se/help/stats/treebagger.html)<br />
+Matlab's own random forest variation.
 
 
