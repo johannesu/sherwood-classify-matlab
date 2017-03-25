@@ -50,7 +50,7 @@ References
 ===
 1. [Decision Forests: A Unified Framework for Classification, Regression, Density Estimation, Manifold Learning and Semi-Supervised Learning](http://research.microsoft.com/apps/pubs/default.aspx?id=158806)<br />
 Foundations and Trends® in Computer Graphics and Vision, 2012.<br />
-__Antonio Criminisi, Jamie Shotton, and Ender Konukoglu.__
+_Antonio Criminisi, Jamie Shotton, and Ender Konukoglu_.
 
 2. [Randomforest-matlab](https://code.google.com/p/randomforest-matlab/) <br />
 A Matlab wrapper of a R wrapper of Leo Breiman's fortran code.
