@@ -1,6 +1,5 @@
 This is a MATLAB wrapper for doing classification using the decision forest framework [1] available at
-[http://research.microsoft.com/en-us/projects/decisionforests/]
-(http://research.microsoft.com/en-us/projects/decisionforests/) ,
+[http://research.microsoft.com/en-us/projects/decisionforests/](http://research.microsoft.com/en-us/projects/decisionforests/) ,
 hereinafter referred to as Sherwood.
 
 Training and classification is parallelized.
